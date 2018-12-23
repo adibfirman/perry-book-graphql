@@ -10,9 +10,9 @@ const {
 
 // dummy data
 const books = [
-  { id: '1', name: 'Harry Potter', genre: 'Fantasy' },
-  { id: '2', name: 'Mr. Bean', genre: 'Comedy' },
-  { id: '3', name: 'xXx: The return Cage', genre: 'Action' }
+  { id: '1', name: 'Harry Potter', genre: 'Fantasy', authorId: '1' },
+  { id: '2', name: 'Mr. Bean', genre: 'Comedy', authorId: '2' },
+  { id: '3', name: 'xXx: The return Cage', genre: 'Action', authorId: '3' }
 ]
 
 const authors = [
@@ -26,7 +26,14 @@ const BookType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
-    genre: { type: GraphQLString }
+    genre: { type: GraphQLString },
+    authorId: { type: GraphQLString },
+    author: {
+      type: AuthorType,
+      resolve(parent) {
+        return authors.filter(author => author.id === parent.authorId)[0]
+      }
+    }
   })
 })
 
