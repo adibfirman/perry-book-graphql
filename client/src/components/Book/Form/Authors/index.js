@@ -10,9 +10,12 @@ const Authors = ({ data }) => {
   }
 
   return (
-    data.authors.map(({ name, id }) => (
-      <option key={id} >{name}</option>
-    ))
+    <React.Fragment>
+      <option>--- Select Author ---</option>
+      {data.authors.map(({ name, id }) => (
+        <option key={id} value={id}>{name}</option>
+      ))}
+    </React.Fragment>
   )
 
 }
