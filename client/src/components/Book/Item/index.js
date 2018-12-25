@@ -2,10 +2,10 @@ import React from 'react';
 
 const BookItem = props => {
 
-  const { name } = props
+  const { id, name, onClick } = props
 
   return (
-    <li>{name}</li>
+    <li onClick={() => onClick(id)}>{name}</li>
   )
 
 }
