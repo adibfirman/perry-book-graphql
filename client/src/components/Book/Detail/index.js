@@ -8,7 +8,7 @@ const BookDetail = props => {
   const { book } = props.data
 
   return (
-    <div id="detail-books">
+    <div id="book-details">
     {
       book ?
       <div>
