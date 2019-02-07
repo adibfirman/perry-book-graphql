@@ -5,62 +5,60 @@ import Authors from './Authors';
 import { createNewBook } from './queries';
 import { getBookList } from '../List/queries';
 
-class BookForm extends React.PureComponent {
+const initialReducer = {
+  name: '',
+  genre: '',
+  authorId: ''
+}
 
-  state = {
-    name: '',
-    genre: '',
-    authorId: ''
+function reducerForms(state, payload) {
+  switch (payload.type) {
+    case 'reset':
+      return initialReducer
+    default:
+      return { ...state, [payload.name]: payload.value }
+  }
+}
+
+function BookForm({ createBook }) {
+  const [forms, dispatch] = React.useReducer(reducerForms, initialReducer)
+
+  function handleOnChange(e) {
+    const { name, value } = e.target
+    dispatch({ name, value })
   }
 
-  handleOnChange = e => {
-    this.setState({ [e.target.name]: e.target.value })
-  }
-
-  handleSubmitForm = e => {
+  function handleSubmitForm(e) {
     e.preventDefault()
 
-    this.props.createBook({
-      variables: { ...this.state },
+    createBook({
+      variables: { ...forms },
       refetchQueries: [{ query: getBookList }],
       awaitRefetchQueries: true,
-      update: this.resetDataForm
+      update: dispatch({ type: 'reset' })
     })
   }
 
-  resetDataForm = () => {
-    this.setState({
-      name: '',
-      genre: '',
-      authorId: ''
-    })
-  }
+  return (
+    <form id="add-book" onSubmit={handleSubmitForm}>
+      <div className="field">
+        <label>Book Name:</label>
+        <input type="text" name="name" value={forms.name} onChange={handleOnChange} />
+      </div>
+      <div className="field">
+        <label>Genre Book:</label>
+        <input type="text" name="genre" value={forms.genre} onChange={handleOnChange} />
+      </div>
+      <div className="field">
+        <label>Author:</label>
+        <select name="authorId" value={forms.authorId} onChange={handleOnChange}>
+          <Authors />
+        </select>
+      </div>
 
-  render() {
-    const { name, genre, authorId } = this.state
-
-    return (
-      <form id="add-book" onSubmit={this.handleSubmitForm}>
-        <div className="field">
-          <label>Book Name:</label>
-          <input type="text" name="name" value={name} onChange={this.handleOnChange} />
-        </div>
-        <div className="field">
-          <label>Genre Book:</label>
-          <input type="text" name="genre" value={genre} onChange={this.handleOnChange} />
-        </div>
-        <div className="field">
-          <label>Author:</label>
-          <select name="authorId" value={authorId} onChange={this.handleOnChange}>
-            <Authors />
-          </select>
-        </div>
-  
-        <button type="submit">+</button>
-      </form>
-    )
-  }
-
+      <button type="submit">+</button>
+    </form>
+  )
 }
 
 export default graphql(createNewBook, { name: 'createBook' })(BookForm)
